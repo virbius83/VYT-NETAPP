@@ -6,27 +6,28 @@
     - netapp.ontap
 
   tasks:
+
     - name: Gather volume information for the current SVM
       netapp.ontap.na_ontap_info:
         gather_subset:
           - volume_info
-      register: volume_info
+      register: ontap_data
 
-    - name: Display volume details with utilization (human readable)
+    - name: Display volume details with utilization
       ansible.builtin.debug:
         msg: |
           ================================================
           SVM: {{ inventory_hostname }}
-          Total Volumes: {{ volume_info.ontap_info.volume_info | default([]) | length }}
-          {% for vol in volume_info.ontap_info.volume_info | default([]) %}
+          Total Volumes: {{ ontap_data.ontap_info.volume_info | default([]) | length }}
+          {% for vol in ontap_data.ontap_info.volume_info | default([]) %}
           ---
-          Volume Name     : {{ vol.name }}
-          Type            : {{ vol.type | default('N/A') }}
-          State           : {{ vol.state | default('N/A') }}
-          Size            : {{ (vol.size | default(0)) | human_readable }}
-          Used            : {{ (vol.used | default(0)) | human_readable }}
-          Available       : {{ (vol.available | default(0)) | human_readable }}
-          % Used          : {{ vol.percent_used | default('N/A') }}%
-          Snap Reserve    : {{ vol.snapshot_reserve_percent | default('N/A') }}%
+          Volume      : {{ vol.name }}
+          Type        : {{ vol.type | default('N/A') }}
+          State       : {{ vol.state | default('N/A') }}
+          Size        : {{ (vol.size | default(0)) | human_readable }}
+          Used        : {{ (vol.used | default(0)) | human_readable }}
+          Available   : {{ (vol.available | default(0)) | human_readable }}
+          % Used      : {{ vol.percent_used | default('N/A') }}%
+          Snap Reserve: {{ vol.snapshot_reserve_percent | default('N/A') }}%
           {% endfor %}
           ================================================
