@@ -5,6 +5,11 @@
   collections:
     - netapp.ontap
 
+  vars:
+    ansible_connection: httpapi
+    ansible_network_os: netapp.ontap
+    ansible_httpapi_validate_certs: false
+
   tasks:
 
     - name: Gather volume information for the current SVM
