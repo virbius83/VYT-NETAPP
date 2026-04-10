@@ -1,0 +1,32 @@
+---
+- name: Show Volumes and Utilization per SVM (READ-ONLY)
+  hosts: cso_netapp_cluster
+  gather_facts: false
+  collections:
+    - netapp.ontap
+
+  tasks:
+
+    - name: Gather volume information for the current SVM
+      netapp.ontap.na_ontap_volume_info:
+        # No additional filters — it will only return volumes in the SVM we are logged into
+      register: volume_info
+
+    - name: Display volume details with utilization (human readable)
+      ansible.builtin.debug:
+        msg: |
+          ================================================
+          SVM: {{ inventory_hostname }}
+          Total Volumes: {{ volume_info.volume_info | length }}
+          {% for vol in volume_info.volume_info %}
+          ---
+          Volume Name     : {{ vol.name }}
+          Type            : {{ vol.type | default('N/A') }}
+          State           : {{ vol.state | default('N/A') }}
+          Size            : {{ (vol.size | default(0)) | human_readable }}
+          Used            : {{ (vol.used | default(0)) | human_readable }}
+          Available       : {{ (vol.available | default(0)) | human_readable }}
+          % Used          : {{ vol.percent_used | default('N/A') }}%
+          Snap Reserve    : {{ vol.snapshot_reserve_percent | default('N/A') }}%
+          {% endfor %}
+          ================================================
