@@ -14,6 +14,10 @@
 
   tasks:
 
+    - name: Show Python
+      debug:
+        var: ansible_python_interpreter
+        
     - name: Gather volume information for the current SVM
       netapp.ontap.na_ontap_info:
         gather_subset:
