@@ -6,7 +6,6 @@
     - netapp.ontap
 
   tasks:
-
     - name: Gather volume information for the current SVM
       netapp.ontap.na_ontap_info:
         gather_subset:
